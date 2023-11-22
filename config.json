@@ -1,0 +1,5 @@
+{
+	"serverPort" : 8000,
+	"serialPort" : "COM7",
+	"serialRate" : 9600
+}
