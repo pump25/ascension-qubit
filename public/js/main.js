@@ -22,6 +22,8 @@ socket.on('arduinoData', data => {
 
   if(btns.reset == 1) {
     hideAllVideos()
+	showImage('img/imgveb1.png');
+	videos.forEach(v => v.time(0))
     counter = 0
   }
 
@@ -30,7 +32,7 @@ socket.on('arduinoData', data => {
     videos[counter].show();
     videos[counter].play();
     console.log(`[Debug] Video ${counter} is playing...`)
-  } 
+  }
   else {
     videos[counter].pause();
     console.log(`[Debug] Video ${counter} is now hidden`)
@@ -80,19 +82,20 @@ function hideAllVideos() {
 
 function setup() {
   noCanvas();
+  noCursor()
   initVideo('video/veb1.mp4', false, () => {
     showImage('img/imgveb1.png');
-    videos[0].hide();
+    //videos[0].pause();
     counter = 1;
   });
   initVideo('video/veb2.mp4', true, () => {
-		showImage('img/imgveb2.png');
-		videos[1].hide();
+		//showImage('img/imgveb2.png');
+		//videos[1].hide();
 		counter = 2;
 	});
 	initVideo('video/veb3.mp4', true, () => {
-		showImage('img/imgveb3.png');
-		videos[2].hide();
+		//showImage('img/imgveb3.png');
+		//videos[2].hide();
 	});
 }
 
