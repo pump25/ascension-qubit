@@ -10,7 +10,9 @@ let videos = [];
 
 let imgDom;
 let counter = 0;
+let veille;
 let accueil;
+let isVeille = false
 
 // Socket initialization
 const socket = io()
@@ -22,18 +24,31 @@ socket.on('arduinoData', data => {
 
   if(btns.reset == 1) {
     hideAllVideos()
+	videos.forEach(v => v.time(0))
     counter = 0
-    accueil.show()
+    veille.show()
+	veille.loop()
+	isVeille = true
+  }
+
+  if (btns.a ^ btns.b) {
+	  if(isVeille){
+	    veille.hide()
+		accueil.time(0)
+		accueil.show()
+		accueil.loop()
+		isVeille = false
+	  }
   }
 
   // console.log(btns)
   if (btns.a == 1 && btns.b == 1) {
-	  accueil.hide();
-	  hideAllVideos();
+	accueil.hide()
+	hideAllVideos();
 	
-    videos[counter].show();
-    videos[counter].play();
-    console.log(`[Debug] Video ${counter} is playing...`)
+	videos[counter].show();
+	videos[counter].play();
+	console.log(`[Debug] Video ${counter} is playing...`)
   }  
   else {
     videos[counter].pause();
@@ -42,12 +57,6 @@ socket.on('arduinoData', data => {
 });
 
 
-function onvideoload(){
-	accueil.volume(0)
-	accueil.autoplay();
-	accueil.loop();
-	accueil.size(windowWidth,windowHeight);
-}
 
 // Helper that creates an image
 function showImage(path) {
@@ -62,8 +71,9 @@ function showImage(path) {
   
   img.style.display = 'block'
 }
+
 function hideImage(path) {
-  let img = document.querySelector(`img[src="${path}"]`)
+	let img = document.querySelector(`img[src="${path}"]`)
 	if(img) img.style.display = 'none'
 }
 
@@ -92,15 +102,29 @@ function hideAllVideos() {
 
 function setup() {
   noCanvas();
-
-	accueil = createVideo('video/accueil.mp4', onvideoload);
-
-  initVideo('video/veht1.mp4', false, () => {
-	  showImage('img/imgveht1.png');
-    videos[0].hide();
-    counter = 1
+  noCursor()
+  veille = createVideo('video/veille.mp4', () => {
+	veille.volume(0)
+	veille.autoplay();
+	veille.loop();
+	veille.size(windowWidth, windowHeight);
+    isVeille = true
   });
-  initVideo('video/veht2.mp4', true, () => {
+  
+  accueil = createVideo('video/accueil.mp4', () => {
+	accueil.volume(0)
+	accueil.pause();
+	accueil.hide();
+	accueil.size(windowWidth, windowHeight);
+  });
+  
+
+    initVideo('video/veht1.mp4', false, () => {
+		showImage('img/imgveht1.png');
+		videos[0].hide();
+		counter = 1
+    });
+    initVideo('video/veht2.mp4', true, () => {
 		showImage('img/imgveht2.png');
 		hideImage('img/imgveht1.png');
 		videos[1].hide();
